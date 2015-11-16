@@ -1,0 +1,64 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="card")
+ */
+class Card {
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $series;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $number;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $issue_date;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $expiry_date;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $usage_date;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2)
+     */
+    protected $amount;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $status;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Purchase", mappedBy="card")
+     */
+    protected $purchase;
+
+    public function __construct() {
+        $this->purchase = new ArrayCollection();
+    }
+
+}

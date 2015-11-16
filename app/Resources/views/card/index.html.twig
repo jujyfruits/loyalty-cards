@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="wrapper">
+        <div id="container">
+            <div class="controls">
+                <form id="card-generate" class="form-inline" action="" method="post">
+                    {{ form_start(generate_form) }}
+                    <div class="generate-form-errors form-alert">&nbsp;</div>
+                    {{ form_errors(generate_form) }}{{ form_row(generate_form.series) }}
+                    {{ form_row(generate_form.expiryPeriod) }}
+                    {{ form_row(generate_form.amount) }}
+                    {{ form_row(generate_form.generate) }}
+                    {{ form_end(generate_form) }}
+                </form>
+                
+                <hr>
+
+                <form id="card-search" action="" method="post">
+                    {{ form_start(search_form) }}
+                    <div class="search-form-errors form-alert">&nbsp;</div>
+                    {{ form_errors(search_form) }}
+                    <table>
+                        <tr>
+                            <th class="col-sm-1">{{ form_row(search_form.series) }}</th>
+                            <th class="col-sm-1">{{ form_row(search_form.number) }}</th>
+                            <th class="col-sm-2">{{ form_row(search_form.issueDate) }}</th>
+                            <th class="col-sm-2">{{ form_row(search_form.expiryDate) }}</th>
+                            <th class="col-sm-1">{{ form_row(search_form.status) }}</th>
+                            <th class="col-sm-1">{{ form_row(search_form.search) }}</th>
+                        </tr>
+                    </table>
+                    {{ form_end(search_form) }}
+                </form>
+            </div>
+            <hr>
+            <div class="content">
+                {{ include('card/partial/card_list.html.twig', { 'cards': cards }) }}
+            </div>
+        </div>
+
+        <div id="ensure-modal" class="modal fade">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <p id="modal-ensure-text"></p>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button id="modal-submit-button" type="button" class="btn btn-primary">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                var ensureModal = $('#ensure-modal');
+                var submitButton = ensureModal.find('#modal-submit-button');
+                var modalEnsureText = ensureModal.find('#modal-ensure-text');
+
+                $('#card-generate').on('submit', function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('generate_cards') }}",
+                        dataType: "html",
+                        data: form.serialize(),
+                        cache: false,
+                        success: function (data) {
+                            $('.cards-table').replaceWith(data);
+                            form.find('.generate-form-errors').html('Карты были успешно сгенерированы');
+                        },
+                        error: function (response) {
+                            form.find('.generate-form-errors').html('Произошла ошибка во время генерирования.');
+                        }
+                    });
+                });
+
+                $('#card-search').on('submit', function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('search_cards') }}",
+                        dataType: "html",
+                        data: form.serialize(),
+                        cache: false,
+                        success: function (data) {
+                            console.log(data);
+                            $('.cards-table').replaceWith(data);
+                        },
+                        error: function (response) {
+                            form.find('.search-form-errors').html(response.data);
+                        }
+                    });
+                });
+
+                $('body').on('click', '.card-change-btn', function () {
+                    modalEnsureText.html('Вы уверены что хотите ' + $(this).html().toLowerCase() + ' карту?');
+                    submitButton.html($(this).html());
+                    submitButton.attr('data-attr-card', $(this).attr('data-attr-card'));
+                    submitButton.attr('data-attr-action', $(this).attr('data-attr-action'));
+                    ensureModal.modal('show');
+                });
+
+                ensureModal.on('click', '#modal-submit-button', function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('change_card') }}",
+                        dataType: "html",
+                        data: {
+                            cardId: $(this).attr('data-attr-card'),
+                            action: $(this).attr('data-attr-action')
+                        },
+                        cache: false,
+                        success: function (data) {
+                            $('.cards-table').replaceWith(data);
+                            ensureModal.modal('hide');
+                            modalEnsureText.html('')
+                            submitButton.html('').attr('data-attr-card', '');
+                        },
+                        error: function (response) {
+                            modalEnsureText.html('Произошла ошибка изменения карты');
+                        }
+                    });
+                });
+
+            });
+        </script>
+    </div>
+{% endblock %}

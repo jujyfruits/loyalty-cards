@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="wrapper">
+        <div id="container">
+            <h3>
+                <a href="{{ path('card_list') }}">Список карт</a> &rarr; Просмотр профиля карты
+            </h3>
+            <div class="clear clr clear-fix"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    <table class="table table-hover card-information">
+                        <tr>
+                            <td class="card-property">Серия:</td>
+                            <td class="">{{ card.series }}</td>
+                        </tr>
+                        <tr>
+                            <td class="card-property">Номер:</td>
+                            <td class="">{{ card.number }}</td>
+                        </tr>
+                        <tr>
+                            <td class="card-property">Сумма:</td>
+                            <td class="">{{ card.amount }}</td>
+                        </tr>
+                        <tr>
+                            <td class="card-property">Дата выпуска:</td>
+                            <td class="">{{ card.issueDate | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="card-property">Дата окончания активности:</td>
+                            <td class="">{{ card.expiryDate | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="card-property">Статус:</td>
+                            <td class="">{{ card.status }}</td>
+                        </tr>
+                        <tr>
+                            <td class="card-property">Дата использования:</td>
+                            <td class="">{{ card.usageDate | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }}</td>
+                        </tr>
+                    </table>
+                    <a href="{{ path('generate_purchase', {'cardId': card.id }) }}">Сгенерировать покупки</a>
+                </div>
+                <div class="col-md-8"> 
+                    <h4>
+                        <div class="text-center">Список покупок по карте</div>
+                    </h4>
+                    <table class="table table-hover card-information">
+                        <tr>
+                            <th class="card-property">Дата</th>
+                            <th class="card-property">Сумма</th>
+                        </tr>
+                        {% for purchase in purchases %}
+                            <tr>
+                                <td>{{ purchase.date| localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }}</td>
+                                <td>{{ purchase.amount }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

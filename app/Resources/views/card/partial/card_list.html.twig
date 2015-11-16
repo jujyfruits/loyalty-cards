@@ -1,0 +1,37 @@
+
+<table class="cards-table table table-striped table-bordered table-responsive">
+    <tr>
+        <th class="col-sm-1"></th>
+        <th class="col-sm-1">Серия</th>
+        <th class="col-sm-1">Номер</th>
+        <th class="col-sm-1">Дата выпуска</th>
+        <th class="col-sm-1">Дата окончания активности</th>
+        <th class="col-sm-1">Статус</th>
+        <th class="col-sm-1"></th>
+        <th class="col-sm-1"></th>
+    </tr>
+    {% for card in cards %}
+        <tr>
+            <th><a href="{{ path('card_show',{'cardId':card.id}) }}">Открыть</a></th>
+
+            <td>{{ card.series() }}</td>
+            <td>{{ card.number() }}</td>
+            <td>{{ card.issueDate() | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }}</td>
+            <td>{{ card.expiryDate() | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }}</td>
+            <td>{{ card.status() }}</td>
+            <th>
+                {% if (card.status() == 'Inactive') %}
+                    <button data-attr-action="status" data-attr-card="{{ card.id }}" 
+                            class="btn btn-success card-change-btn col-sm-12">Активировать</button>
+                {% elseif (card.status() == 'Active') %}
+                    <button data-attr-action="status" data-attr-card="{{ card.id }}" 
+                            class="btn btn-primary card-change-btn col-sm-12">Деактивировать</button>
+                {% endif%}
+            </th>
+            <th>
+                <button data-attr-action="remove" data-attr-card="{{ card.id }}" 
+                        class="btn btn-danger card-change-btn col-sm-12">Удалить</button>
+            </th>
+        </tr>
+    {% endfor %}
+</table>

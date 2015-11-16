@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/custom.css') }}" />
+
+        {% stylesheets '@bootstrap_css' %}
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+
+        {% javascripts '@jquery' '@bootstrap_js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+        <title>{% block title %}Loyalty cards{% endblock %}</title>
+
+    </head>
+    <body>
+    {% block body %}{% endblock %}
+    </body>
+</html>
